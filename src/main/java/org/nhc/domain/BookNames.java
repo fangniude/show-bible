@@ -3,8 +3,10 @@ package org.nhc.domain;
 import com.google.common.collect.Lists;
 import lombok.*;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -101,5 +103,30 @@ public class BookNames {
 
     public static Map<String, BookNames> osisMap() {
         return all.stream().collect(Collectors.toMap(BookNames::getOsis, Function.identity()));
+    }
+
+    public static BookNames valueOf(String s) {
+        Optional<BookNames> osisMatch = all.stream().filter(bn -> bn.match(s)).findFirst();
+        if (osisMatch.isPresent()) {
+            return osisMatch.get();
+        } else {
+            throw new RuntimeException("book not found.");
+        }
+    }
+
+    private boolean match(String s) {
+        if (this.osis.equalsIgnoreCase(s)) {
+            return true;
+        } else if (this.chineseName.equalsIgnoreCase(s)) {
+            return true;
+        } else if (this.pinyin.equalsIgnoreCase(s)) {
+            return true;
+        } else if (this.pinyin.matches(String.format(".*%s.*", String.join(".*", String.join(".*", s.split("")))))) {
+            return true;
+        } else if (this.chineseName.matches(String.format(".*%s.*", String.join(".*", String.join(".*", s.split("")))))) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

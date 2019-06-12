@@ -59,13 +59,16 @@ public void testBetween() throws Exception {
 
 /** 
 * 
-* Method: main(String[] args) 
-* 
+*
 */ 
 @Test
-public void testMain() throws Exception { 
-//TODO: Test goes here... 
-} 
+public void testBookName() throws Exception {
+    System.out.println(BookNames.valueOf("tq"));
+    System.out.println(BookNames.valueOf("gldh"));
+    System.out.println(BookNames.valueOf("td"));
+    System.out.println(BookNames.valueOf("mt"));
+
+}
 
 
 /** 
