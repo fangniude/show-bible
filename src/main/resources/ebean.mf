@@ -1,0 +1,3 @@
+entity-packages: org.nhc.domain
+transactional-packages: org.nhc.domain
+querybean-packages: org.nhc.domain
