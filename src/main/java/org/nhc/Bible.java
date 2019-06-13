@@ -63,12 +63,7 @@ public class Bible {
 
     private static DataSource dataSource(String version) {
         SQLiteDataSource ds = new SQLiteDataSource();
-//        getClass().getResource("/resources/database.sqlite").toString()
         ds.setUrl(String.format("jdbc:sqlite::resource:versions/%s.sqlite3", version));
-//        String url = String.format("jdbc:sqlite::resource:file:%s", Bible.class.getClassLoader().getResource(String.format("versions/%s.sqlite3", version).toString()));
-//        String url = String.format("jdbc:sqlite::resource:file:%s", Bible.class.getResource(String.format("/versions/%s.sqlite3", version)));
-//        String url = String.format("jdbc:sqlite::resource:file:%s", String.format("versions/%s.sqlite3", version));
-//        ds.setUrl(url);
 
         return ds;
     }
