@@ -11,7 +11,6 @@ import lombok.Setter;
 public class ShowViewModel implements ViewModel {
     private StringProperty showVerses = new SimpleStringProperty("");
 
-
     public String getVerses() {
         return showVerses.get();
     }

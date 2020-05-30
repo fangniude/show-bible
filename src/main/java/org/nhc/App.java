@@ -3,17 +3,16 @@ package org.nhc;
 import de.saxsys.mvvmfx.FluentViewLoader;
 import de.saxsys.mvvmfx.ViewTuple;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import org.avaje.agentloader.AgentLoader;
 
-import java.io.IOException;
-
 /**
  * JavaFX App
+ *
+ * @author lewis
  */
 @Slf4j
 public class App extends Application {
@@ -26,7 +25,7 @@ public class App extends Application {
     }
 
     @Override
-    public void start(Stage stage) throws IOException {
+    public void start(Stage stage) {
         stage.setTitle("Show-Bible");
         ViewTuple<PrimaryView, ShowViewModel> viewTuple = FluentViewLoader.fxmlView(PrimaryView.class).load();
 

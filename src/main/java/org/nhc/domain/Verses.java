@@ -39,4 +39,8 @@ public class Verses extends Model {
         }
         return sb.toString();
     }
+
+    public String verseContent() {
+        return String.format("%d %s", verse(), content);
+    }
 }

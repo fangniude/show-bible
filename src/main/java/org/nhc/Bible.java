@@ -25,6 +25,10 @@ public class Bible {
         bookMap = loadVersion(version);
     }
 
+    public List<Verses> fetch(BookNames bookName, int chapter) {
+        return new ArrayList<>(bookMap.get(bookName).getVerses().get(chapter).values());
+    }
+
     public Verses fetch(BookNames bookName, int chapter, int verse) {
         return bookMap.get(bookName).getVerses().get(chapter).get(verse);
     }

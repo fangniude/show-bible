@@ -5,7 +5,6 @@ import de.saxsys.mvvmfx.InjectViewModel;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
@@ -17,7 +16,8 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
-import javafx.scene.input.ScrollEvent;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -32,6 +32,9 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
+/**
+ * @author lewis
+ */
 public class PrimaryView implements FxmlView<ShowViewModel>, Initializable {
     @FXML
     public Label showLabel;
@@ -41,10 +44,10 @@ public class PrimaryView implements FxmlView<ShowViewModel>, Initializable {
 
     @FXML
     public ScrollPane scrollPane;
-    public ComboBox fontName;
-    public ComboBox fontSize;
+    public ComboBox<String> fontName;
+    public ComboBox<Integer> fontSize;
     public ColorPicker fontColor;
-    public ComboBox lineSpacing;
+    public ComboBox<Double> lineSpacing;
     public ColorPicker backColor;
     public VBox showPane;
 
@@ -61,7 +64,7 @@ public class PrimaryView implements FxmlView<ShowViewModel>, Initializable {
         showLabel.textProperty().bind(viewModel.getShowVerses());
         dialog = fullScreenDailog();
 
-        scrollPane.vvalueProperty().addListener(observable -> showPaneChanged(null));
+        scrollPane.vvalueProperty().addListener(observable -> showPaneChanged());
 
         List<String> fontNames = Font.getFamilies();
         fontName.setItems(FXCollections.observableList(fontNames));
@@ -70,31 +73,44 @@ public class PrimaryView implements FxmlView<ShowViewModel>, Initializable {
         fontSize.setItems(FXCollections.observableArrayList(30, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100));
         fontSize.getSelectionModel().select(5);
 
-        lineSpacing.setItems(FXCollections.observableArrayList(0.5, 0.8, 1.0, 1.2, 1.3, 1.5, 1.8, 2, 2.5));
+        lineSpacing.setItems(FXCollections.observableArrayList(0.5, 0.8, 1.0, 1.2, 1.3, 1.5, 1.8, 2.0, 2.5));
         lineSpacing.getSelectionModel().select(5);
 
         fontColor.setValue(Color.BLACK);
     }
 
-    public void buttonClicked(ActionEvent actionEvent) {
+    public void search() {
         String text = this.text.getText();
         String[] split = text.split("\\s");
 
         String s = split[0];
         BookNames bookName = BookNames.valueOf(s);
 
-        if (split.length == 3) {
-            Verses fetch = bible.fetch(bookName, Integer.valueOf(split[1]), Integer.valueOf(split[2]));
-            this.viewModel.setVerses(fetch.getContent());
-        } else if (split.length == 4) {
-            List<Verses> between = bible.between(bookName, Integer.valueOf(split[1]), Integer.valueOf(split[2]), Integer.valueOf(split[3]));
-            this.viewModel.setVerses(between.stream().map(Verses::getContent).collect(Collectors.joining("\n")));
+        switch (split.length) {
+            case 1:
+                List<Verses> chapter1Verses = bible.fetch(bookName, 1);
+                this.viewModel.setVerses(chapter1Verses.stream().map(Verses::verseContent).collect(Collectors.joining("\n")));
+                break;
+            case 2:
+                List<Verses> chapterVerses = bible.fetch(bookName, Integer.parseInt(split[1]));
+                this.viewModel.setVerses(chapterVerses.stream().map(Verses::verseContent).collect(Collectors.joining("\n")));
+                break;
+            case 3:
+                Verses fetch = bible.fetch(bookName, Integer.parseInt(split[1]), Integer.parseInt(split[2]));
+                this.viewModel.setVerses(fetch.verseContent());
+                break;
+            case 4:
+                List<Verses> between = bible.between(bookName, Integer.parseInt(split[1]), Integer.parseInt(split[2]), Integer.parseInt(split[3]));
+                this.viewModel.setVerses(between.stream().map(Verses::verseContent).collect(Collectors.joining("\n")));
+                break;
+            default:
+                // do nothing
         }
-        formatChanged(null);
+        formatChanged();
     }
 
-    public void touping(ActionEvent actionEvent) {
-        showPaneChanged(null);
+    public void touping() {
+        showPaneChanged();
         dialog.show();
     }
 
@@ -102,16 +118,10 @@ public class PrimaryView implements FxmlView<ShowViewModel>, Initializable {
         ImageView imageView = new ImageView();
         imageView.imageProperty().bind(imageProperty);
 
-        Rectangle2D bounds = secondScreenBounds();
-
         Stage dialog = new Stage();
         dialog.setFullScreen(true);
+        dialog.setScene(new Scene(new Pane(imageView)));
 
-        dialog.setX(bounds.getMinX());
-        dialog.setY(bounds.getMinY());
-
-        Scene scene = new Scene(new Pane(imageView));
-        dialog.setScene(scene);
         return dialog;
     }
 
@@ -140,25 +150,33 @@ public class PrimaryView implements FxmlView<ShowViewModel>, Initializable {
         return writableImage;
     }
 
-    public void showPaneChanged(ScrollEvent scrollEvent) {
-
+    public void showPaneChanged() {
         Rectangle2D d = secondScreenBounds();
         scrollPane.setPrefHeight(scrollPane.getViewportBounds().getWidth() * d.getHeight() / d.getWidth());
         showPane.setPrefWidth(scrollPane.getViewportBounds().getWidth());
 
+        dialog.setX(d.getMinX());
+        dialog.setY(d.getMinY());
+
         imageProperty.set(image());
     }
 
-    public void formatChanged(ActionEvent actionEvent) {
-        Font font = Font.font(String.valueOf(fontName.getSelectionModel().getSelectedItem()), Double.valueOf(String.valueOf(fontSize.getSelectionModel().getSelectedItem())));
+    public void formatChanged() {
+        Font font = Font.font(String.valueOf(fontName.getSelectionModel().getSelectedItem()), Double.parseDouble(String.valueOf(fontSize.getSelectionModel().getSelectedItem())));
         showLabel.setFont(font);
 
         showLabel.setTextFill(fontColor.getValue());
 
-        showLabel.setLineSpacing(Double.valueOf(String.valueOf(lineSpacing.getSelectionModel().getSelectedItem())));
+        showLabel.setLineSpacing(Double.parseDouble(String.valueOf(lineSpacing.getSelectionModel().getSelectedItem())));
 
         showLabel.setBackground(new Background(new BackgroundFill(backColor.getValue(), CornerRadii.EMPTY, Insets.EMPTY)));
 
-        showPaneChanged(null);
+        showPaneChanged();
+    }
+
+    public void checkTextEnter(KeyEvent keyEvent) {
+        if (keyEvent.getCode() == KeyCode.ENTER) {
+            search();
+        }
     }
 }

@@ -3,7 +3,6 @@ package org.nhc.domain;
 import com.google.common.collect.Lists;
 import lombok.*;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;

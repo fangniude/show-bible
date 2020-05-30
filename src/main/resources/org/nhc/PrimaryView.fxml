@@ -102,8 +102,8 @@
 
     <FlowPane GridPane.columnIndex="1" GridPane.rowIndex="1">
         <children>
-            <TextField fx:id="text"/>
-            <Button mnemonicParsing="false" onAction="#buttonClicked" text="搜索"/>
+            <TextField fx:id="text" onKeyReleased="#checkTextEnter"/>
+            <Button mnemonicParsing="false" onAction="#search" text="搜索"/>
         </children>
     </FlowPane>
 </GridPane>
