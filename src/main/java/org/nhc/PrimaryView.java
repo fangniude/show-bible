@@ -61,7 +61,7 @@ public class PrimaryView implements FxmlView<ShowViewModel>, Initializable {
         showLabel.textProperty().bind(viewModel.getShowVerses());
         dialog = fullScreenDailog();
 
-        scrollPane.vvalueProperty().addListener(observable -> showPanehanged(null));
+        scrollPane.vvalueProperty().addListener(observable -> showPaneChanged(null));
 
         List<String> fontNames = Font.getFamilies();
         fontName.setItems(FXCollections.observableList(fontNames));
@@ -94,7 +94,7 @@ public class PrimaryView implements FxmlView<ShowViewModel>, Initializable {
     }
 
     public void touping(ActionEvent actionEvent) {
-        showPanehanged(null);
+        showPaneChanged(null);
         dialog.show();
     }
 
@@ -109,11 +109,7 @@ public class PrimaryView implements FxmlView<ShowViewModel>, Initializable {
 
         dialog.setX(bounds.getMinX());
         dialog.setY(bounds.getMinY());
-        imageView.setFitWidth(bounds.getMinX());
-        imageView.setFitHeight(bounds.getMinY());
-        imageView.setPreserveRatio(true);
 
-//        StackPane pane = new StackPane(imageView);
         Scene scene = new Scene(new Pane(imageView));
         dialog.setScene(scene);
         return dialog;
@@ -137,14 +133,14 @@ public class PrimaryView implements FxmlView<ShowViewModel>, Initializable {
                 (int) Math.round(d.getHeight()));
 
         final SnapshotParameters spa = new SnapshotParameters();
-        spa.setTransform(javafx.scene.transform.Transform.scale(d.getMaxX() / bounds.getWidth(), d.getMaxY() / bounds.getHeight()));
+        spa.setTransform(javafx.scene.transform.Transform.scale(d.getWidth() / bounds.getWidth(), d.getHeight() / bounds.getHeight()));
 
         WritableImage writableImage = scrollPane.snapshot(spa, image);
         imageProperty.set(writableImage);
         return writableImage;
     }
 
-    public void showPanehanged(ScrollEvent scrollEvent) {
+    public void showPaneChanged(ScrollEvent scrollEvent) {
 
         Rectangle2D d = secondScreenBounds();
         scrollPane.setPrefHeight(scrollPane.getViewportBounds().getWidth() * d.getHeight() / d.getWidth());
@@ -163,6 +159,6 @@ public class PrimaryView implements FxmlView<ShowViewModel>, Initializable {
 
         showLabel.setBackground(new Background(new BackgroundFill(backColor.getValue(), CornerRadii.EMPTY, Insets.EMPTY)));
 
-        showPanehanged(null);
+        showPaneChanged(null);
     }
 }

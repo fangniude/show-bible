@@ -18,8 +18,6 @@ import java.io.IOException;
 @Slf4j
 public class App extends Application {
 
-    private static Scene scene;
-
     static {
         // Load the agent into the running JVM process
         if (!AgentLoader.loadAgentFromClasspath("ebean-agent", "debug=1")) {
@@ -35,24 +33,9 @@ public class App extends Application {
         Parent root = viewTuple.getView();
         stage.setScene(new Scene(root));
         stage.show();
-
-
-//        scene = new Scene(loadFXML("primary"));
-//        stage.setScene(scene);
-//        stage.show();
-    }
-
-//    static void setRoot(String fxml) throws IOException {
-//        scene.setRoot(loadFXML(fxml));
-//    }
-
-    private static Parent loadFXML(String fxml) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
-        return fxmlLoader.load();
     }
 
     public static void main(String[] args) {
         launch(args);
     }
-
 }

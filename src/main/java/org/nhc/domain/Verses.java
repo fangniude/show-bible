@@ -25,11 +25,11 @@ public class Verses extends Model {
     private String content;
 
     public int chapter() {
-        return Integer.valueOf(verse.split("\\.")[0]);
+        return Integer.parseInt(verse.split("\\.")[0]);
     }
 
     public int verse() {
-        return Integer.valueOf(fill(verse.split("\\.")[1]));
+        return Integer.parseInt(fill(verse.split("\\.")[1]));
     }
 
     private String fill(String str) {

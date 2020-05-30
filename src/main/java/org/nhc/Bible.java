@@ -30,7 +30,7 @@ public class Bible {
     }
 
     public List<Verses> between(BookNames bookName, int chapter, int from, int to) {
-        return bookMap.get(bookName).getVerses().get(chapter).subMap(from, true, to, true).values().stream().collect(Collectors.toList());
+        return new ArrayList<>(bookMap.get(bookName).getVerses().get(chapter).subMap(from, true, to, true).values());
     }
 
     private static NavigableMap<BookNames, Book> loadVersion(String version) {
